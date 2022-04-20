@@ -1,0 +1,124 @@
+﻿@page "/machinelist"
+@using System.Text.Json
+@using Maskin.Client.Models
+@using System.Text
+@using System.Net.Mime
+
+<PageTitle>Machines </PageTitle>
+<h3>Machines</h3>
+<p>@DisplayMessage</p>
+
+<label>Enter Name</label>
+<input @bind="MachineName"/>
+<br />
+<label>Enter data</label>
+<input @bind="MachineData" />
+<br />
+<label>Status</label>
+<input type="checkbox" @bind="MachineStatus">
+<br />
+<button type="submit" @onclick="@AddMachine">Add Food Item</button>
+
+@if (_machines != null)
+{
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Status</th>
+            <th scope="col">Data</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var machine in _machines)
+        {
+            <tr>
+                <td>@machine.Name</td>
+                <td>@machine.Status</td>
+                <td>@machine.Data</td>
+                <td><button @onclick="@(() => DeleteMachine(@machine.Id))">DELETE</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    DisplayMessage = "Hello!";
+}
+@code {
+    private async Task AddMachine()
+    {
+
+        HttpClient client = new HttpClient { BaseAddress = new Uri(" http://localhost:7071/api/machine")};
+
+        HttpResponseMessage response = null;
+
+        var payload = new machine()
+        {
+            Name = MachineName,
+            Data = MachineData,
+            Status = MachineStatus,
+
+        };
+
+        var payloadString = new StringContent(System.Text.Json.JsonSerializer.Serialize(payload), Encoding.UTF8, MediaTypeNames.Application.Json);
+
+        response = await client.PostAsync(client.BaseAddress, payloadString);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await PopulateTable();
+            DisplayMessage = "Successfully added!";
+        }
+        else
+        {
+            DisplayMessage = response.StatusCode.ToString() + "\n" + client.BaseAddress.ToString();
+        }
+    }
+    public string MachineName { get; set; }
+    public string MachineData { get; set; }
+    public bool MachineStatus { get; set; }
+    public string DisplayMessage { get; set; }
+    public machine[] _machines { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+       DisplayMessage = "hello!";
+       await PopulateTable();
+    }
+
+
+    private async Task PopulateTable()
+    {
+
+        HttpClient client = new HttpClient { BaseAddress = new Uri(" http://localhost:7071/api/machine") };
+
+        HttpResponseMessage response = null;
+
+        response = await client.GetAsync(client.BaseAddress);
+
+        if (response.Content is object && response.Content.Headers.ContentType.MediaType == "application/json")
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            _machines = JsonSerializer.Deserialize<machine[]>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+
+    }
+
+    private async Task DeleteMachine(string id)
+    {
+        HttpClient client = new HttpClient { BaseAddress = new Uri(" http://localhost:7071/api/machine/" + id) };
+
+        HttpResponseMessage response = null;
+
+        response = await client.DeleteAsync(client.BaseAddress);
+
+        if (response.IsSuccessStatusCode)
+        {
+            DisplayMessage = "We deleted: " + id;
+        }
+
+        await PopulateTable();
+    }
+}
