@@ -17,7 +17,7 @@ namespace Maskin.Client.Pages
         public async Task AddMachine()
         {
 
-            HttpClient client = new HttpClient { BaseAddress = new Uri(" http://localhost:7071/api/machine") };
+            HttpClient client = new HttpClient { BaseAddress = new Uri("https://maskinapi.azurewebsites.net") };
 
             HttpResponseMessage response = null;
 
@@ -52,7 +52,7 @@ namespace Maskin.Client.Pages
         public async Task PopulateTable()
         {
 
-            HttpClient client = new HttpClient { BaseAddress = new Uri(" http://localhost:7071/api/machine") };
+            HttpClient client = new HttpClient { BaseAddress = new Uri("https://maskinapi.azurewebsites.net") };
 
             HttpResponseMessage response = null;
 
@@ -68,7 +68,7 @@ namespace Maskin.Client.Pages
 
         public async Task DeleteMachine(string id)
         {
-            HttpClient client = new HttpClient { BaseAddress = new Uri(" http://localhost:7071/api/machine/" + id) };
+            HttpClient client = new HttpClient { BaseAddress = new Uri("https://maskinapi.azurewebsites.net" + id) };
 
             HttpResponseMessage response = null;
 
