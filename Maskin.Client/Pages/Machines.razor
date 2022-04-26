@@ -35,9 +35,16 @@
         {
             <tr>
                 <td>@machine.Name</td>
-                <td>@machine.Status</td>
-                <td>@machine.Data</td>
-                <td><button @onclick="@(() => DeleteMachine(@machine.Id))">DELETE</button></td>
+                    @if (@machine.Status)
+                    {
+                        <label type="text" readonly class="form-control-plaintext">Online</label>
+                    }
+                    else
+                    {
+                        <label type="text" readonly class="form-control-plaintext">Offline</label>
+                    }
+                    <td>@machine.Data</td>
+                <td><button @onclick="@(() => DeleteMachine(@machine.Id))">Delete</button></td>
             </tr>
         }
         </tbody>
