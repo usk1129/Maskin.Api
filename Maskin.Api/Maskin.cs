@@ -21,7 +21,7 @@ namespace Maskin.Api
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "machine")] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("Called get_fooditems with GET request");
+
 
             return new OkObjectResult(MachineStore.machines);
         }
@@ -31,8 +31,6 @@ namespace Maskin.Api
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "machine/{id}")] HttpRequest req,
             ILogger log, string id)
         {
-            log.LogInformation("Called get_machines_by_id with GET request");
-
             var machine = MachineStore.machines.FirstOrDefault(f => f.Id.Equals(id));
             if (machine == null)
             {
@@ -47,8 +45,6 @@ namespace Maskin.Api
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "machine")] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("Called add_machine with POST request");
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
             var machine = JsonConvert.DeserializeObject<Machine>(requestBody);
@@ -63,8 +59,6 @@ namespace Maskin.Api
            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "machine/{id}")] HttpRequest req,
            ILogger log, string id)
         {
-            log.LogInformation("Called delete_machine with DELETE request.");
-
             var machine = MachineStore.machines.FirstOrDefault(f => f.Id.Equals(id));
 
             if (machine == null)
